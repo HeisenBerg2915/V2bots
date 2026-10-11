@@ -1207,6 +1207,8 @@ async def manual_filters(client, message, text=False):
                         )
                 except Exception as e:
                     logger.exception(e)
-                break
+                
+                # 🟢 പ്രധാന തിരുത്ത്: ഫിൽട്ടർ കണ്ടെത്തി ഫയൽ അയച്ചു കഴിഞ്ഞാൽ True എന്ന് റിട്ടേൺ ചെയ്യുക
+                return True
     else:
         return False
