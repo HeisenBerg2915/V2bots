@@ -12,7 +12,12 @@ logger.setLevel(logging.ERROR)
 async def addconnection(client, message):
     userid = message.from_user.id if message.from_user else None
     if not userid:
-        return await message.reply(f"You are anonymous admin. Use /connect {message.chat.id} in PM")
+        return
+        
+    # Admin അല്ലെങ്കിൽ ഇവിടെ വെച്ച് ഫങ്ക്ഷൻ സ്റ്റോപ്പ് ആകും (മറുപടി അയക്കില്ല)
+    if userid not in ADMINS:
+        return
+
     chat_type = message.chat.type
 
     if chat_type == enums.ChatType.PRIVATE:
@@ -83,7 +88,12 @@ async def addconnection(client, message):
 async def deleteconnection(client, message):
     userid = message.from_user.id if message.from_user else None
     if not userid:
-        return await message.reply(f"You are anonymous admin. Use /connect {message.chat.id} in PM")
+        return
+        
+    # Admin അല്ലെങ്കിൽ മറുപടി നൽകില്ല
+    if userid not in ADMINS:
+        return
+
     chat_type = message.chat.type
 
     if chat_type == enums.ChatType.PRIVATE:
@@ -110,6 +120,10 @@ async def deleteconnection(client, message):
 @Client.on_message(filters.private & filters.command(["connections"]))
 async def connections(client, message):
     userid = message.from_user.id
+    
+    # Admin അല്ലെങ്കിൽ മറുപടി നൽകില്ല
+    if userid not in ADMINS:
+        return
 
     groupids = await all_connections(str(userid))
     if groupids is None:
