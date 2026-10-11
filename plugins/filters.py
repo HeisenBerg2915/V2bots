@@ -17,7 +17,12 @@ from info import ADMINS
 async def addfilter(client, message):
     userid = message.from_user.id if message.from_user else None
     if not userid:
-        return await message.reply(f"You are anonymous admin. Use /connect {message.chat.id} in PM")
+        return
+        
+    # Admin അല്ലെങ്കിൽ ഇവിടെ വെച്ച് ഫങ്ക്ഷൻ സ്റ്റോപ്പ് ആകും (മറുപടി അയക്കില്ല)
+    if userid not in ADMINS:
+        return
+        
     chat_type = message.chat.type
     args = message.text.html.split(None, 1)
 
@@ -49,7 +54,6 @@ async def addfilter(client, message):
         and str(userid) not in ADMINS
     ):
         return
-
 
     if len(args) < 2:
         await message.reply_text("Command Incomplete :(", quote=True)
@@ -118,11 +122,15 @@ async def addfilter(client, message):
 
 @Client.on_message(filters.command(['viewfilters', 'filters']) & filters.incoming)
 async def get_all(client, message):
-    
     chat_type = message.chat.type
     userid = message.from_user.id if message.from_user else None
     if not userid:
-        return await message.reply(f"You are anonymous admin. Use /connect {message.chat.id} in PM")
+        return
+        
+    # Admin അല്ലെങ്കിൽ ഇവിടെ വെച്ച് ഫങ്ക്ഷൻ സ്റ്റോപ്പ് ആകും
+    if userid not in ADMINS:
+        return
+        
     if chat_type == enums.ChatType.PRIVATE:
         grpid = await active_connection(str(userid))
         if grpid is not None:
@@ -183,7 +191,12 @@ async def get_all(client, message):
 async def deletefilter(client, message):
     userid = message.from_user.id if message.from_user else None
     if not userid:
-        return await message.reply(f"You are anonymous admin. Use /connect {message.chat.id} in PM")
+        return
+        
+    # Admin അല്ലെങ്കിൽ ഇവിടെ വെച്ച് ഫങ്ക്ഷൻ സ്റ്റോപ്പ് ആകും
+    if userid not in ADMINS:
+        return
+        
     chat_type = message.chat.type
 
     if chat_type == enums.ChatType.PRIVATE:
@@ -229,7 +242,6 @@ async def deletefilter(client, message):
     query = text.lower().strip()
 
     try:
-        # ഇവിടെയാണ് തിരുത്തിയത്: ഡാറ്റാബേസ് ഫങ്ക്ഷനിലേക്ക് grp_id, query എന്നിവ മാത്രം നൽകുന്നു
         success = await delete_filter(grp_id, query)
         
         if success:
@@ -257,7 +269,12 @@ async def deletefilter(client, message):
 async def delallconfirm(client, message):
     userid = message.from_user.id if message.from_user else None
     if not userid:
-        return await message.reply(f"You are anonymous admin. Use /connect {message.chat.id} in PM")
+        return
+        
+    # Admin അല്ലെങ്കിൽ ഇവിടെ വെച്ച് ഫങ്ക്ഷൻ സ്റ്റോപ്പ് ആകും
+    if userid not in ADMINS:
+        return
+        
     chat_type = message.chat.type
 
     if chat_type == enums.ChatType.PRIVATE:
@@ -281,7 +298,6 @@ async def delallconfirm(client, message):
     else:
         return
 
-
     st = await client.get_chat_member(grp_id, userid)
     if (st.status == enums.ChatMemberStatus.OWNER) or (str(userid) in ADMINS):
         await message.reply_text(
@@ -292,4 +308,3 @@ async def delallconfirm(client, message):
             ]),
             quote=True
         )
-
