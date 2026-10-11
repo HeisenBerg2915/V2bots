@@ -866,6 +866,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
 
 
+
 async def auto_filter(client, msg, spoll=False):
     if not spoll:
         message = msg
@@ -885,21 +886,21 @@ async def auto_filter(client, msg, spoll=False):
         if not search: return
 
         files, offset, total_results = await get_search_results(search, offset=0, filter=True)
-    if not files:
-        # 🟢 തിരുത്തിയ ഭാഗം: നേരിട്ട് സ്പെൽ ചെക്ക് വിളിക്കാതെ വെറുതെ False റിട്ടേൺ ചെയ്യുന്നു.
-        # ഇത് മെയിൻ ഫങ്ഷനിലേക്ക് (give_filters) വിവരമെത്തിക്കും, അവിടെ നിന്ന് സ്പെൽ ചെക്ക് വർക്ക് ആകും.
-        return False
+        
+        if not files:
+            # 🟢 മാനുവൽ ഫിൽട്ടറിന് ചെക്ക് ചെയ്യാൻ മെയിൻ ഫങ്ഷനിലേക്ക് False അയക്കുന്നു
+            return False
 
-    key = f"{message.chat.id}-{message.id}"
-    _trim_dict(BUTTONS)
+        key = f"{message.chat.id}-{message.id}"
+        _trim_dict(BUTTONS)
         BUTTONS[key] = {"query": search, "total": total_results, "time": time.time()}
     else:
         message = msg.message.reply_to_message if hasattr(msg, "message") and msg.message else msg
         search, files, offset, total_results = spoll
 
-    key = f"{message.chat.id}-{message.id}"
-    _trim_dict(BUTTONS)
-    BUTTONS[key] = {"query": search, "total": total_results, "time": time.time()}
+        key = f"{message.chat.id}-{message.id}"
+        _trim_dict(BUTTONS)
+        BUTTONS[key] = {"query": search, "total": total_results, "time": time.time()}
 
     year_match = re.findall(r'\b(19\d{2}|20[0-2]\d)\b', search)
     print_check_text, languages_found = "", []
@@ -981,8 +982,10 @@ async def auto_filter(client, msg, spoll=False):
             await message.reply_text(text=cap, reply_markup=reply_markup, disable_web_page_preview=True)
     except Exception:
         pass
-    
-                              
+
+    # 🟢 സിനിമ വിജയകരമായി അയച്ചു കഴിഞ്ഞാൽ True റിട്ടേൺ ചെയ്യുന്നു
+    return True
+                             
 
 async def advantage_spell_chok(client, msg):
     mv_id, mv_rqst = msg.id, msg.text
