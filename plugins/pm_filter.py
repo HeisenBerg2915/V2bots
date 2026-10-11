@@ -984,11 +984,26 @@ async def advantage_spell_chok(client, msg):
         "", msg.text, flags=re.IGNORECASE
     ).strip()
 
+    # 🟢 1. ബാക്ക്ഗ്രൗണ്ടിൽ മാനുവൽ ഫിൽട്ടർ ഉണ്ടോ എന്ന് ചെക്ക് ചെയ്യുന്നു
+    try:
+        manual_res = await manual_filters(client, msg)
+    except Exception as e:
+        logger.error(f"Manual filter error in spell check: {e}")
+        manual_res = False
+
+    # 🟢 2. മാനുവൽ ഫിൽട്ടറിൽ സിനിമ ഉണ്ടെങ്കിൽ (True ആണെങ്കിൽ) ഫങ്ഷൻ ഇവിടെ വെച്ച് നിർത്തുന്നു
+    # ഗ്രൂപ്പിലേക്ക് സ്പെൽ ചെക്ക് മെസ്സേജ് അയക്കില്ല, സിനിമ ഡാറ്റാബേസിൽ സേവ് ചെയ്യുകയുമില്ല.
+    if manual_res == True:
+        logger.info(f"Manual filter-ൽ സിനിമ ഉള്ളതിനാൽ സ്പെൽ ചെക്ക് ഒഴിവാക്കി.")
+        return
+
+    # 🟢 3. മാനുവൽ ഫിൽട്ടറിലും സിനിമ ഇല്ലെങ്കിൽ മാത്രം missing movie ലിസ്റ്റിലേക്ക് സേവ് ചെയ്യും
     try:
         await save_missing_movie(cleaned_query)
     except Exception as e:
         logger.error(f"Missing movie save error: {e}")
 
+    # 📝 4. സിനിമ ഒന്നിലും ഇല്ലാത്തതുകൊണ്ട് താഴോട്ടുള്ള നിങ്ങളുടെ പഴയ സ്പെൽ ചെക്ക് കോഡുകൾ റൺ ആകുന്നു
     reqst_gle = quote_plus(mv_rqst)
     google_button = InlineKeyboardMarkup([
         [InlineKeyboardButton("🔎 𝗖𝗼𝗿𝗿𝗲𝗰𝘁 𝗦𝗽𝗲𝗹𝗹𝗶𝗻𝗴 (𝖦𝗈𝗈𝗀𝗅𝖾)", url=f"https://www.google.com/search?q={reqst_gle}")],
