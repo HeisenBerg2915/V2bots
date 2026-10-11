@@ -220,15 +220,37 @@ async def deletefilter(client, message):
     except:
         await message.reply_text(
             "<i>Mention the filtername which you wanna delete!</i>\n\n"
-            "<code>/del filtername</code>\n\n"
+            "<code>/delf filtername</code>\n\n"
             "Use /viewfilters to view all available filters",
             quote=True
         )
         return
 
-    query = text.lower()
+    query = text.lower().strip()
 
-    await delete_filter(message, query, grp_id)
+    try:
+        # ഇവിടെയാണ് തിരുത്തിയത്: ഡാറ്റാബേസ് ഫങ്ക്ഷനിലേക്ക് grp_id, query എന്നിവ മാത്രം നൽകുന്നു
+        success = await delete_filter(grp_id, query)
+        
+        if success:
+            await message.reply_text(
+                f"Filter `{query}` deleted successfully from **{title}**!",
+                quote=True,
+                parse_mode=enums.ParseMode.MARKDOWN
+            )
+        else:
+            await message.reply_text(
+                f"Filter `{query}` not found in **{title}**!",
+                quote=True,
+                parse_mode=enums.ParseMode.MARKDOWN
+            )
+    except Exception as e:
+        await message.reply_text(
+            f"An error occurred: `{e}`",
+            quote=True,
+            parse_mode=enums.ParseMode.MARKDOWN
+        )
+
         
 
 @Client.on_message(filters.command('delallf') & filters.incoming)
