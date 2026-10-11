@@ -65,22 +65,12 @@ def _trim_dict(d: dict, max_size: int = 100):
 BUTTONS = {}
 
 
+# ഗ്രൂപ്പുകളിൽ ബോട്ട് അഡ്മിൻ അല്ലെങ്കിലും വരുന്ന ടെക്സ്റ്റ് മെസ്സേജുകൾ എടുക്കാൻ filters.group കൂടി ചേർക്കുന്നു
 @Client.on_message(filters.group & filters.text & filters.incoming)
 async def give_filters(client, message):
-    # 1. ആദ്യം ഗ്ലോബൽ ഫിൽട്ടർ നോക്കുന്നു
     k = await global_filters(client, message)    
-    
     if k == False:
-        # 2. മാനുവലും ഓട്ടോയും ഒരേ സമയം (Parallel) റൺ ചെയ്ത് റിസൾട്ട് ഒന്നിച്ച് എടുക്കുന്നു
-        m_res, a_res = await asyncio.gather(
-            manual_filters(client, message),
-            auto_filter(client, message)
-        )
-        
-        # 3. 🟢 ഓട്ടോ ഫിൽട്ടറിൽ സിനിമ കിട്ടിയില്ലെങ്കിൽ (False ആണെങ്കിൽ) സ്പെൽ ചെക്ക് റൺ ചെയ്യും
-        # മാനുവൽ ഫിൽട്ടറിന്റെ റിസൾട്ട് (m_res) ഇതിലേക്ക് പാസ്സ് ചെയ്യുന്നു
-        if a_res == False: 
-            await advantage_spell_chok(client, message, manual_res=m_res)
+        await auto_filter(client, message)
 
 
 
@@ -886,10 +876,10 @@ async def auto_filter(client, msg, spoll=False):
         if not search: return
 
         files, offset, total_results = await get_search_results(search, offset=0, filter=True)
-        
         if not files:
-            # 🟢 മാനുവൽ ഫിൽട്ടറിന് ചെക്ക് ചെയ്യാൻ മെയിൻ ഫങ്ഷനിലേക്ക് False അയക്കുന്നു
-            return False
+            try: await advantage_spell_chok(client, msg)
+            except Exception: pass
+            return
 
         key = f"{message.chat.id}-{message.id}"
         _trim_dict(BUTTONS)
@@ -983,9 +973,6 @@ async def auto_filter(client, msg, spoll=False):
     except Exception:
         pass
 
-    # 🟢 സിനിമ വിജയകരമായി അയച്ചു കഴിഞ്ഞാൽ True റിട്ടേൺ ചെയ്യുന്നു
-    return True
-                             
 
 async def advantage_spell_chok(client, msg):
     mv_id, mv_rqst = msg.id, msg.text
@@ -997,14 +984,10 @@ async def advantage_spell_chok(client, msg):
         "", msg.text, flags=re.IGNORECASE
     ).strip()
 
-    # 🟢 മാനുവൽ ഫിൽട്ടറിൽ റിസൾട്ട് ഇല്ലെങ്കിൽ (False ആണെങ്കിൽ) മാത്രം missing movie സേവ് ചെയ്യും
-    if manual_filters == False:
-        try:
-            await save_missing_movie(cleaned_query)
-        except Exception as e:
-            logger.error(f"Missing movie save error: {e}")
-    else:
-        logger.info(f"Manual filter-ൽ റിസൾട്ട് ഉള്ളതിനാൽ '{cleaned_query}' missing ലിസ്റ്റിൽ സേവ് ചെയ്തില്ല.")
+    try:
+        await save_missing_movie(cleaned_query)
+    except Exception as e:
+        logger.error(f"Missing movie save error: {e}")
 
     reqst_gle = quote_plus(mv_rqst)
     google_button = InlineKeyboardMarkup([
