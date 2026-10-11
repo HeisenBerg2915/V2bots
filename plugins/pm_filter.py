@@ -442,10 +442,12 @@ async def next_page(bot, query):
     except FloodWait as e:
         await query.answer(f"Please wait {e.value} seconds.", show_alert=True)
 
+
 @Client.on_callback_query()
 async def cb_handler(client: Client, query: CallbackQuery):
     if query.data == "close_data":
         await query.message.delete()                
+    
     elif query.data == "delallconfirm":
         userid = query.from_user.id
         chat_type = query.message.chat.type
@@ -458,12 +460,11 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     chat = await client.get_chat(grpid)
                     title = chat.title
                 except:
-                    await query.message.edit_text("Make sure I'm present in your group!!", quote=True)
+                    await query.message.edit_text("Make sure I'm present in your group!!")
                     return await query.answer('Piracy Is Crime')
             else:
                 await query.message.edit_text(
-                    "I'm not connected to any groups!\nCheck /connections or connect to any groups",
-                    quote=True
+                    "I'm not connected to any groups!\nCheck /connections or connect to any groups"
                 )
                 return await query.answer('Piracy Is Crime')
 
@@ -476,9 +477,18 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
         st = await client.get_chat_member(grp_id, userid)
         if (st.status == enums.ChatMemberStatus.OWNER) or (str(userid) in ADMINS):
-            await del_all(query.message, grp_id, title)
+            await query.answer("Deleting all filters...", show_alert=False)
+            
+            # ഫിക്സ് ചെയ്ത ഭാഗം: ഡാറ്റാബേസ് ഫങ്ക്ഷനിലേക്ക് grp_id മാത്രം നൽകുന്നു
+            success = await del_all(grp_id)
+            
+            if success:
+                await query.message.edit_text(f"🗑 **{title}** ലെ എല്ലാ ഫിൽട്ടറുകളും വിജയകരമായി ഡിലീറ്റ് ചെയ്തു!")
+            else:
+                await query.message.edit_text(f"❌ **{title}** ൽ ഡിലീറ്റ് ചെയ്യാൻ ഫിൽട്ടറുകൾ ഒന്നും തന്നെയില്ല!")
         else:
             await query.answer("You need to be Group Owner or an Auth User to do that!", show_alert=True)
+            
     elif query.data == "delallcancel":
         userid = query.from_user.id
         chat_type = query.message.chat.type
@@ -498,6 +508,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     pass
             else:
                 await query.answer("That's not for you!!", show_alert=True)
+                
     elif "groupcb" in query.data:
         await query.answer()
 
@@ -527,6 +538,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             parse_mode=enums.ParseMode.MARKDOWN
         )
         return await query.answer('Piracy Is Crime')
+        
     elif "connectcb" in query.data:
         await query.answer()
 
@@ -548,6 +560,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         else:
             await query.message.edit_text('Some error occurred!!', parse_mode=enums.ParseMode.MARKDOWN)
         return await query.answer('Piracy Is Crime')
+        
     elif "disconnect" in query.data:
         await query.answer()
 
@@ -571,6 +584,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 parse_mode=enums.ParseMode.MARKDOWN
             )
         return await query.answer('Piracy Is Crime')
+        
     elif "deletecb" in query.data:
         await query.answer()
 
@@ -589,6 +603,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 parse_mode=enums.ParseMode.MARKDOWN
             )
         return await query.answer('Piracy Is Crime')
+        
     elif query.data == "backcb":
         await query.answer()
 
@@ -621,6 +636,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 "Your connected group details ;\n\n",
                 reply_markup=InlineKeyboardMarkup(buttons)
             )
+            
     elif "alertmessage" in query.data:
         grp_id = query.message.chat.id
         i = query.data.split(":")[1]
@@ -630,7 +646,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
             alerts = ast.literal_eval(alerts)
             alert = alerts[int(i)]
             alert = alert.replace("\\n", "\n").replace("\\t", "\t")
-            await query.answer(alert, show_alert=True) 
+            await query.answer(alert, show_alert=True)        
+        
             
     if query.data.startswith("file"):
         ident, file_id = query.data.split("#")
