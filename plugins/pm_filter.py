@@ -71,11 +71,17 @@ async def give_filters(client, message):
     k = await global_filters(client, message)    
     
     if k == False:
-        # 2. ഗ്ലോബൽ ഇല്ലെങ്കിൽ മാനുവൽ ഫിൽട്ടറും ഓട്ടോ ഫിൽട്ടറും ഒരേ സമയം (Parallel) പ്രവർത്തിപ്പിക്കുന്നു
-        await asyncio.gather(
+        # 2. മാനുവലും ഓട്ടോയും ഒരേ സമയം (Parallel) റൺ ചെയ്ത് റിസൾട്ട് ഒന്നിച്ച് എടുക്കുന്നു
+        m_res, a_res = await asyncio.gather(
             manual_filters(client, message),
             auto_filter(client, message)
         )
+        
+        # 3. 🟢 ഓട്ടോ ഫിൽട്ടറിൽ സിനിമ കിട്ടിയില്ലെങ്കിൽ (False ആണെങ്കിൽ) സ്പെൽ ചെക്ക് റൺ ചെയ്യും
+        # മാനുവൽ ഫിൽട്ടറിന്റെ റിസൾട്ട് (m_res) ഇതിലേക്ക് പാസ്സ് ചെയ്യുന്നു
+        if a_res == False: 
+            await advantage_spell_chok(client, message, manual_res=m_res)
+
 
 
 # 2. "📢 Coming Soon" ബട്ടൺ ക്ലിക്ക് ചെയ്യുമ്പോൾ ഉള്ള അലേർട്ട്
@@ -880,12 +886,12 @@ async def auto_filter(client, msg, spoll=False):
 
         files, offset, total_results = await get_search_results(search, offset=0, filter=True)
         if not files:
-            try: await advantage_spell_chok(client, msg)
-            except Exception: pass
-            return
+        # 🟢 തിരുത്തിയ ഭാഗം: നേരിട്ട് സ്പെൽ ചെക്ക് വിളിക്കാതെ വെറുതെ False റിട്ടേൺ ചെയ്യുന്നു.
+        # ഇത് മെയിൻ ഫങ്ഷനിലേക്ക് (give_filters) വിവരമെത്തിക്കും, അവിടെ നിന്ന് സ്പെൽ ചെക്ക് വർക്ക് ആകും.
+        return False
 
-        key = f"{message.chat.id}-{message.id}"
-        _trim_dict(BUTTONS)
+    key = f"{message.chat.id}-{message.id}"
+    _trim_dict(BUTTONS)
         BUTTONS[key] = {"query": search, "total": total_results, "time": time.time()}
     else:
         message = msg.message.reply_to_message if hasattr(msg, "message") and msg.message else msg
@@ -1208,7 +1214,6 @@ async def manual_filters(client, message, text=False):
                 except Exception as e:
                     logger.exception(e)
                 
-                # 🟢 പ്രധാന തിരുത്ത്: ഫിൽട്ടർ കണ്ടെത്തി ഫയൽ അയച്ചു കഴിഞ്ഞാൽ True എന്ന് റിട്ടേൺ ചെയ്യുക
-                return True
+                return True  # 🟢 പ്രധാന തിരുത്ത്: സിനിമ കിട്ടിയാൽ True റിട്ടേൺ ചെയ്യും
     else:
         return False
