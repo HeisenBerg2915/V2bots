@@ -12,6 +12,13 @@ from Script import script
 import pyrogram
 from database.connections_mdb import active_connection, all_connections, delete_connection, if_active, make_active, \
     make_inactive
+
+from database.filters_mdb import (
+    del_all,
+    find_filter,
+    get_filters,
+)
+
 # 🚀 സ്റ്റാറ്റ്സ് പാനലിൽ പേര് കൃത്യമായി വരാൻ DATABASE_NAME കൂടി ഇമ്പോർട്ട് ചെയ്യുന്നു ✨
 from info import ADMINS, REQ_CHANNEL1, REQ_CHANNEL2, AUTH_USERS, CUSTOM_FILE_CAPTION, AUTH_GROUPS, P_TTI_SHOW_OFF, SINGLE_BUTTON, SPELL_CHECK_REPLY, LOG_CHANNEL, SPELL_IMG, DATABASE_NAME, YEAR_IMG
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
@@ -57,12 +64,17 @@ def _trim_dict(d: dict, max_size: int = 100):
 BUTTONS = {}
 
 
-# ഗ്രൂപ്പുകളിൽ ബോട്ട് അഡ്മിൻ അല്ലെങ്കിലും വരുന്ന ടെക്സ്റ്റ് മെസ്സേജുകൾ എടുക്കാൻ filters.group കൂടി ചേർക്കുന്നു
 @Client.on_message(filters.group & filters.text & filters.incoming)
 async def give_filters(client, message):
+    # 1. ആദ്യം ഗ്ലോബൽ ഫിൽട്ടർ നോക്കുന്നു
     k = await global_filters(client, message)    
+    
     if k == False:
-        await auto_filter(client, message)
+        # 2. ഗ്ലോബൽ ഇല്ലെങ്കിൽ മാനുവൽ ഫിൽട്ടറും ഓട്ടോ ഫിൽട്ടറും ഒരേ സമയം (Parallel) പ്രവർത്തിപ്പിക്കുന്നു
+        await asyncio.gather(
+            manual_filters(client, message),
+            auto_filter(client, message)
+        )
 
 
 # 2. "📢 Coming Soon" ബട്ടൺ ക്ലിക്ക് ചെയ്യുമ്പോൾ ഉള്ള അലേർട്ട്
@@ -1120,6 +1132,57 @@ async def global_filters(client, message, text=False):
                                 logger.warning(f"FloodWait triggered! Sleeping for {e.value} seconds.")
                                 await asyncio.sleep(e.value)
 
+                except Exception as e:
+                    logger.exception(e)
+                break
+    else:
+        return False
+
+
+
+
+async def manual_filters(client, message, text=False):
+    group_id = message.chat.id
+    name = text or message.text
+    reply_id = message.reply_to_message.id if message.reply_to_message else message.id
+    keywords = await get_filters(group_id)
+    for keyword in reversed(sorted(keywords, key=len)):
+        pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
+        if re.search(pattern, name, flags=re.IGNORECASE):
+            reply_text, btn, alert, fileid = await find_filter(group_id, keyword)
+
+            if reply_text:
+                reply_text = reply_text.replace("\\n", "\n").replace("\\t", "\t")
+
+            if btn is not None:
+                try:
+                    if fileid == "None":
+                        if btn == "[]":
+                            await client.send_message(group_id, reply_text, disable_web_page_preview=True)
+                        else:
+                            button = eval(btn)
+                            await client.send_message(
+                                group_id,
+                                reply_text,
+                                disable_web_page_preview=True,
+                                reply_markup=InlineKeyboardMarkup(button),
+                                reply_to_message_id=reply_id
+                            )
+                    elif btn == "[]":
+                        await client.send_cached_media(
+                            group_id,
+                            fileid,
+                            caption=reply_text or "",
+                            reply_to_message_id=reply_id
+                        )
+                    else:
+                        button = eval(btn)
+                        await message.reply_cached_media(
+                            fileid,
+                            caption=reply_text or "",
+                            reply_markup=InlineKeyboardMarkup(button),
+                            reply_to_message_id=reply_id
+                        )
                 except Exception as e:
                     logger.exception(e)
                 break
