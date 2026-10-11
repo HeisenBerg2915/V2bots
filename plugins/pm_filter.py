@@ -885,7 +885,7 @@ async def auto_filter(client, msg, spoll=False):
         if not search: return
 
         files, offset, total_results = await get_search_results(search, offset=0, filter=True)
-        if not files:
+    if not files:
         # 🟢 തിരുത്തിയ ഭാഗം: നേരിട്ട് സ്പെൽ ചെക്ക് വിളിക്കാതെ വെറുതെ False റിട്ടേൺ ചെയ്യുന്നു.
         # ഇത് മെയിൻ ഫങ്ഷനിലേക്ക് (give_filters) വിവരമെത്തിക്കും, അവിടെ നിന്ന് സ്പെൽ ചെക്ക് വർക്ക് ആകും.
         return False
