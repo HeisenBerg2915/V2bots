@@ -988,10 +988,14 @@ async def advantage_spell_chok(client, msg):
         "", msg.text, flags=re.IGNORECASE
     ).strip()
 
-    try:
-        await save_missing_movie(cleaned_query)
-    except Exception as e:
-        logger.error(f"Missing movie save error: {e}")
+    # 🟢 മാനുവൽ ഫിൽട്ടറിൽ റിസൾട്ട് ഇല്ലെങ്കിൽ (False ആണെങ്കിൽ) മാത്രം missing movie സേവ് ചെയ്യും
+    if manual_filters == False:
+        try:
+            await save_missing_movie(cleaned_query)
+        except Exception as e:
+            logger.error(f"Missing movie save error: {e}")
+    else:
+        logger.info(f"Manual filter-ൽ റിസൾട്ട് ഉള്ളതിനാൽ '{cleaned_query}' missing ലിസ്റ്റിൽ സേവ് ചെയ്തില്ല.")
 
     reqst_gle = quote_plus(mv_rqst)
     google_button = InlineKeyboardMarkup([
