@@ -117,7 +117,7 @@ async def deletegfilter(client, message: Message):
     await delete_gfilter('gfilters', query)
     await message.reply_text(f"🗑️ Global filter `{query}` deleted successfully.", quote=True)
 
-@Client.on_message(filters.command('delallg') & filters.user(ADMINS))
+@Client.on_message(filters.command('delallg') & filters.incoming & filters.user(ADMINS))
 async def delallgfilters(client, message: Message):
     await message.reply_text(
         "Do you want to clear all global filters completely?",
@@ -129,11 +129,20 @@ async def delallgfilters(client, message: Message):
     )
 
 @Client.on_callback_query(filters.regex("^gfiltersdeleteallconfirm$"))
-async def dellacbd(client, query):
+async def dellacbd(client, query: CallbackQuery):
+    # ബട്ടൺ ക്ലിക്ക് ചെയ്യുന്ന ആൾ അഡ്മിൻ ലിസ്റ്റിൽ ഉള്ള ആളാണോ എന്ന് ഉറപ്പാക്കുന്നു
+    if query.from_user.id not in ADMINS:
+        return await query.answer("നിങ്ങൾക്ക് ഈ ആക്ഷൻ ചെയ്യാനുള്ള അനുമതിയില്ല! ❌", show_alert=True)
+        
     await del_allg(query.message, 'gfilters')
-    await query.answer("All Global Filters Deleted! 👍")
+    await query.message.edit_text("🗑️ All Global Filters Deleted Successfully! 👍")
+    await query.answer()
 
 @Client.on_callback_query(filters.regex("^gfiltersdeleteallcancel$"))
-async def cancel_delall(client, query):
-    await query.answer("Action Cancelled!")
+async def cancel_delall(client, query: CallbackQuery):
+    if query.from_user.id not in ADMINS:
+        return await query.answer("നിങ്ങൾക്ക് ഈ ആക്ഷൻ ചെയ്യാനുള്ള അനുമതിയില്ല! ❌", show_alert=True)
+        
     await query.message.edit_text("Process Cancelled. ❌")
+    await query.answer("Action Cancelled!")
+
