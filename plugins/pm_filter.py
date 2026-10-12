@@ -1175,6 +1175,7 @@ async def manual_filters(client, message, text=False):
     name = text or message.text
     reply_id = message.reply_to_message.id if message.reply_to_message else message.id
     keywords = await get_filters(group_id)
+    
     for keyword in reversed(sorted(keywords, key=len)):
         pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
         if re.search(pattern, name, flags=re.IGNORECASE):
@@ -1187,7 +1188,13 @@ async def manual_filters(client, message, text=False):
                 try:
                     if fileid == "None":
                         if btn == "[]":
-                            await client.send_message(group_id, reply_text, disable_web_page_preview=True)
+                            # ⚠️ ഇവിടെ reply_to_message_id ചേർത്തു
+                            await client.send_message(
+                                group_id, 
+                                reply_text, 
+                                disable_web_page_preview=True,
+                                reply_to_message_id=reply_id
+                            )
                         else:
                             button = eval(btn)
                             await client.send_message(
@@ -1206,8 +1213,10 @@ async def manual_filters(client, message, text=False):
                         )
                     else:
                         button = eval(btn)
-                        await message.reply_cached_media(
-                            fileid,
+                        # ⚠️ message.reply_cached_media-ന് പകരം client.send_cached_media ഉപയോഗിക്കുന്നതാണ് കൂടുതൽ സുരക്ഷിതം
+                        await client.send_cached_media(
+                            chat_id=group_id,
+                            media=fileid,
                             caption=reply_text or "",
                             reply_markup=InlineKeyboardMarkup(button),
                             reply_to_message_id=reply_id
@@ -1215,6 +1224,6 @@ async def manual_filters(client, message, text=False):
                 except Exception as e:
                     logger.exception(e)
                 
-                return True  # 🟢 പ്രധാന തിരുത്ത്: സിനിമ കിട്ടിയാൽ True റിട്ടേൺ ചെയ്യും
+                return True  # ഫിൽട്ടർ കണ്ടെത്തി റിപ്ലൈ അയച്ചാൽ True റിട്ടേൺ ചെയ്യും
     else:
         return False
