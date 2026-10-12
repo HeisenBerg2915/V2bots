@@ -446,44 +446,20 @@ async def cb_handler(client: Client, query: CallbackQuery):
     
     elif query.data == "delallconfirm":
         userid = query.from_user.id
-        chat_type = query.message.chat.type
+        
+        # 🔐 അഡ്മിൻ സുരക്ഷാ ചെക്ക്
+        if userid not in ADMINS:
+            return await query.answer("You need to be a Bot Admin to do that!", show_alert=True)
 
-        if chat_type == enums.ChatType.PRIVATE:
-            grpid = await active_connection(str(userid))
-            if grpid is not None:
-                grp_id = grpid
-                try:
-                    chat = await client.get_chat(grpid)
-                    title = chat.title
-                except:
-                    await query.message.edit_text("Make sure I'm present in your group!!")
-                    return await query.answer('Piracy Is Crime')
-            else:
-                await query.message.edit_text(
-                    "I'm not connected to any groups!\nCheck /connections or connect to any groups"
-                )
-                return await query.answer('Piracy Is Crime')
-
-        elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-            grp_id = query.message.chat.id
-            title = query.message.chat.title
-
+        await query.answer("Deleting all filters...", show_alert=False)
+        
+        # 🟢 🛠️ തിരുത്തിയ ഭാഗം: ഗ്രൂപ്പ് ഐഡിക്ക് പകരം 'universal_manual_filters' നൽകി ഫിൽട്ടറുകൾ കളയുന്നു
+        success = await del_all('universal_manual_filters')
+        
+        if success:
+            await query.message.edit_text("🗑 **ബോട്ടിലെ മുഴുവൻ Universal ഫിൽട്ടറുകളും വിജയകരമായി ഡിലീറ്റ് ചെയ്തു!**")
         else:
-            return await query.answer('Piracy Is Crime')
-
-        st = await client.get_chat_member(grp_id, userid)
-        if (st.status == enums.ChatMemberStatus.OWNER) or (str(userid) in ADMINS):
-            await query.answer("Deleting all filters...", show_alert=False)
-            
-            # ഫിക്സ് ചെയ്ത ഭാഗം: ഡാറ്റാബേസ് ഫങ്ക്ഷനിലേക്ക് grp_id മാത്രം നൽകുന്നു
-            success = await del_all(grp_id)
-            
-            if success:
-                await query.message.edit_text(f"🗑 **{title}** ലെ എല്ലാ ഫിൽട്ടറുകളും വിജയകരമായി ഡിലീറ്റ് ചെയ്തു!")
-            else:
-                await query.message.edit_text(f"❌ **{title}** ൽ ഡിലീറ്റ് ചെയ്യാൻ ഫിൽട്ടറുകൾ ഒന്നും തന്നെയില്ല!")
-        else:
-            await query.answer("You need to be Group Owner or an Auth User to do that!", show_alert=True)
+            await query.message.edit_text("❌ **ഡാറ്റാബേസിൽ ഡിലീറ്റ് ചെയ്യാൻ ഫിൽട്ടറുകൾ ഒന്നും തന്നെയില്ല!**")       
             
     elif query.data == "delallcancel":
         userid = query.from_user.id
