@@ -1174,12 +1174,15 @@ async def manual_filters(client, message, text=False):
     group_id = message.chat.id
     name = text or message.text
     reply_id = message.reply_to_message.id if message.reply_to_message else message.id
-    keywords = await get_filters(group_id)
+    
+    # 🟢 universal_manual_filters അടിസ്ഥാനമാക്കി എല്ലാ ഫിൽട്ടറുകളും ഒരുമിച്ച് എടുക്കുന്നു
+    keywords = await get_filters('universal_manual_filters')
     
     for keyword in reversed(sorted(keywords, key=len)):
         pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
         if re.search(pattern, name, flags=re.IGNORECASE):
-            reply_text, btn, alert, fileid = await find_filter(group_id, keyword)
+            # 🟢 ഡാറ്റ കണ്ടെത്തുന്നതിനും universal_manual_filters കീ ഉപയോഗിക്കുന്നു
+            reply_text, btn, alert, fileid = await find_filter('universal_manual_filters', keyword)
 
             if reply_text:
                 reply_text = reply_text.replace("\\n", "\n").replace("\\t", "\t")
@@ -1187,7 +1190,7 @@ async def manual_filters(client, message, text=False):
             if btn is not None:
                 try:
                     if fileid == "None":
-                        if btn == "[]":
+                        if btn == "" or btn == "[]":
                             await client.send_message(
                                 group_id, 
                                 reply_text, 
@@ -1203,8 +1206,8 @@ async def manual_filters(client, message, text=False):
                                 reply_markup=InlineKeyboardMarkup(button),
                                 reply_to_message_id=reply_id
                             )
-                    elif btn == "[]":
-                        # ⚠️ ഇവിടെയും file_id എന്ന് തിരുത്തിയിട്ടുണ്ട്
+                    elif btn == "" or btn == "[]":
+                        # 🛠️ ഫിക്സ് ചെയ്ത ഭാഗം: 'media' മാറ്റി 'file_id' എന്ന് നൽകി
                         await client.send_cached_media(
                             chat_id=group_id,
                             file_id=fileid,
