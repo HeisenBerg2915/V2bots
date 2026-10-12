@@ -1188,7 +1188,6 @@ async def manual_filters(client, message, text=False):
                 try:
                     if fileid == "None":
                         if btn == "[]":
-                            # ⚠️ ഇവിടെ reply_to_message_id ചേർത്തു
                             await client.send_message(
                                 group_id, 
                                 reply_text, 
@@ -1205,18 +1204,19 @@ async def manual_filters(client, message, text=False):
                                 reply_to_message_id=reply_id
                             )
                     elif btn == "[]":
+                        # ⚠️ ഇവിടെയും file_id എന്ന് തിരുത്തിയിട്ടുണ്ട്
                         await client.send_cached_media(
-                            group_id,
-                            fileid,
+                            chat_id=group_id,
+                            file_id=fileid,
                             caption=reply_text or "",
                             reply_to_message_id=reply_id
                         )
                     else:
                         button = eval(btn)
-                        # ⚠️ message.reply_cached_media-ന് പകരം client.send_cached_media ഉപയോഗിക്കുന്നതാണ് കൂടുതൽ സുരക്ഷിതം
+                        # 🛠️ ഫിക്സ് ചെയ്ത ഭാഗം: 'media' മാറ്റി 'file_id' എന്ന് നൽകി
                         await client.send_cached_media(
                             chat_id=group_id,
-                            media=fileid,
+                            file_id=fileid,
                             caption=reply_text or "",
                             reply_markup=InlineKeyboardMarkup(button),
                             reply_to_message_id=reply_id
@@ -1224,6 +1224,6 @@ async def manual_filters(client, message, text=False):
                 except Exception as e:
                     logger.exception(e)
                 
-                return True  # ഫിൽട്ടർ കണ്ടെത്തി റിപ്ലൈ അയച്ചാൽ True റിട്ടേൺ ചെയ്യും
+                return True
     else:
         return False
