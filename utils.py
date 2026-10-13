@@ -67,49 +67,113 @@ def _parse_api_keys(keys_config):
         return [k.strip() for k in keys_config.split(",") if k.strip()]
     return keys_config or []
 
+
+
+
 async def get_tmdb_poster(movie_name, tmdb_api_key):
     try:
-        search_url = f"https://api.themoviedb.org/3/search/movie?api_key={tmdb_api_key}&query={urllib.parse.quote(movie_name)}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(search_url, timeout=aiohttp.ClientTimeout(total=4)) as response:
+        query = movie_name.strip()
+        year_match = re.search(r'\b(19\d{2}|20\d{2})\b', query)
+        year = year_match.group(1) if year_match else None
+        title = re.sub(r'\s*\b(19\d{2}|20\d{2})\b\s*', ' ', query).strip()
+        normalize = lambda s: re.sub(r'[^a-z0-9]', '', (s or '').lower())
+        target = normalize(title)
+        if not target:
+            return None
+
+        headers = {"Accept": "application/json"}
+        timeout = aiohttp.ClientTimeout(total=5)
+
+        async with aiohttp.ClientSession(timeout=timeout, headers=headers) as session:
+            url = "https://api.themoviedb.org/3/search/multi"
+            params = {"api_key": tmdb_api_key, "query": title, "include_adult": "false"}
+            async with session.get(url, params=params) as response:
                 if response.status != 200:
                     return None
                 data = await response.json()
-            if not data.get("results"):
+
+            matches = []
+            for item in data.get("results", []):
+                kind = item.get("media_type")
+                if kind not in ("movie", "tv"):
+                    continue
+                names = [item.get("title"), item.get("original_title")] if kind == "movie" else [item.get("name"), item.get("original_name")]
+                if not any(normalize(name) == target for name in names if name):
+                    continue
+                date = item.get("release_date") or item.get("first_air_date") or ""
+                if year and date[:4] != year:
+                    continue
+                matches.append(item)
+
+            if not matches:
                 return None
-            movie = data["results"][0]
-            movie_id = movie.get("id")
-            if movie_id:
-                images_url = f"https://api.themoviedb.org/3/movie/{movie_id}/images?api_key={tmdb_api_key}"
-                async with session.get(images_url, timeout=aiohttp.ClientTimeout(total=4)) as response:
-                    if response.status == 200:
-                        images = await response.json()
-                        backdrops = images.get("backdrops", [])
-                        if backdrops:
-                            backdrops.sort(key=lambda x: x.get("vote_average", 0), reverse=True)
-                            path = backdrops[0].get("file_path")
-                            if path:
-                                return f"https://image.tmdb.org/t/p/original{path}"
-            poster_path = movie.get("poster_path")
-            if poster_path:
-                return f"https://image.tmdb.org/t/p/original{poster_path}"
+
+            matches.sort(key=lambda x: (
+                bool(x.get("backdrop_path")),
+                float(x.get("vote_average") or 0),
+                int(x.get("vote_count") or 0)
+            ), reverse=True)
+
+            for movie in matches:
+                path = movie.get("backdrop_path")
+                if path:
+                    return f"https://image.tmdb.org/t/p/original{path}"
+
+                path = movie.get("poster_path")
+                if path:
+                    return f"https://image.tmdb.org/t/p/original{path}"
+
+                kind = movie.get("media_type")
+                media_id = movie.get("id")
+                if kind and media_id:
+                    endpoint = f"https://api.themoviedb.org/3/{kind}/{media_id}/images"
+                    async with session.get(endpoint, params={"api_key": tmdb_api_key}) as response:
+                        if response.status == 200:
+                            images = await response.json()
+                            backdrops = images.get("backdrops", [])
+                            backdrops.sort(key=lambda x: float(x.get("vote_average") or 0), reverse=True)
+                            if backdrops and backdrops[0].get("file_path"):
+                                return f"https://image.tmdb.org/t/p/original{backdrops[0]['file_path']}"
+
+            return None
     except asyncio.CancelledError:
         raise
     except Exception:
-        pass
-    return None
+        return None
+
 
 async def get_omdb_poster(movie_name, omdb_api_key):
     try:
-        url = f"https://www.omdbapi.com/?apikey={omdb_api_key}&t={urllib.parse.quote(movie_name)}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, timeout=aiohttp.ClientTimeout(total=5)) as response:
+        query = movie_name.strip()
+        year_match = re.search(r'\b(19\d{2}|20\d{2})\b', query)
+        year = year_match.group(1) if year_match else None
+        title = re.sub(r'\s*\b(19\d{2}|20\d{2})\b\s*', ' ', query).strip()
+        normalize = lambda s: re.sub(r'[^a-z0-9]', '', (s or '').lower())
+        if not title:
+            return None
+        params = {"apikey": omdb_api_key, "t": title, "type": "movie"}
+        if year:
+            params["y"] = year
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as session:
+            async with session.get("https://www.omdbapi.com/", params=params) as response:
+                if response.status != 200:
+                    return None
                 data = await response.json()
-                if data.get("Response") == "True" and data.get("Poster") and data["Poster"] != "N/A":
-                    return data["Poster"]
+                if data.get("Response") != "True":
+                    return None
+                if normalize(data.get("Title")) != normalize(title):
+                    return None
+                if year and str(data.get("Year", ""))[:4] != year:
+                    return None
+                poster = data.get("Poster")
+                return poster if poster and poster != "N/A" else None
+    except asyncio.CancelledError:
+        raise
     except Exception:
-        pass
-    return None
+        return None
+
+
+
 
 async def get_any_movie_poster(movie_name):
     cached_poster = await get_cached_poster(movie_name)
