@@ -1,7 +1,8 @@
 class script(object):
     START_TXT = """<blockquote><b>ʜᴀɪ {},</b></blockquote>
-
-"""<blockquote><b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+class script(object):
+    START_TXT = """<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 🎬 ʟᴇᴏ ᴀᴅᴠᴀɴᴄᴇᴅ ғɪʟᴛᴇʀ
 
@@ -11,7 +12,7 @@ class script(object):
 
 ✨ ʏᴏᴜʀ ᴍᴏᴠɪᴇs. ʏᴏᴜʀ ᴄʜᴏɪᴄᴇ.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b></blockquote>"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>"""
 <b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ:</b>
 <u><b><i><a href="https://t.me/+eb__Eg3RS2IyZWQ1">© ᴛᴇᴀᴍ ചിത്രലോകം™</a></i></b></u>"""
 
