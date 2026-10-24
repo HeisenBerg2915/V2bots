@@ -153,7 +153,7 @@ async def start(client, message):
                 ),
                 InlineKeyboardButton(
                     "📊 Stats",
-                    callback_data="bot_stats"
+                    callback_data="stats")])
                 )
             ]
         ]
