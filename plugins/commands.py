@@ -469,11 +469,21 @@ async def start(client, message):
                 data + "=" * (-len(data) % 4)
             ).decode("ascii").split("_", 1)
 
-            msg = await client.send_cached_media(
+            sent_msg = await client.send_cached_media(
                 chat_id=message.from_user.id,
                 file_id=file_id,
+                caption=f"{f_caption}",
+                parse_mode=enums.ParseMode.HTML,
                 protect_content=pre == "filep"
             )
+          
+            async def delete_file():
+                await asyncio.sleep(300)
+                try:
+                    await sent_msg.delete()
+                except Exception as e:
+                    logger.warning(f"Auto delete failed: {e}")
+            asyncio.create_task(delete_file())
 
             file = getattr(
                 msg,
