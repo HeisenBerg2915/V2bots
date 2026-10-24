@@ -11,8 +11,7 @@ class script(object):
 ✨ ʏᴏᴜʀ ᴍᴏᴠɪᴇs. ʏᴏᴜʀ ᴄʜᴏɪᴄᴇ.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b></blockquote>
-<b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ:</b>
-<u><b><i><a href="https://t.me/+eb__Eg3RS2IyZWQ1">© ᴛᴇᴀᴍ ചിത്രലോകം™</a></i></b></u>"""
+<b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ:© ᴛᴇᴀᴍ ചിത്രലോകം™</b>"""
 
     COMMANDS_TXT = """🛠️ <b><u>BOT COMMANDS LIST</u></b>
 
