@@ -1,17 +1,19 @@
 class script(object):
-    START_TXT = """<blockquote><b>Welcome {},</b></blockquote>
+    START_TXT = """<blockquote><b>ʜᴀɪ {},</b></blockquote>
 
-<i>This is an automated movie delivery system built exclusively for our official community.</i>
-<i>If Any Bug Please Contact Admins 👇</i>
-<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>
-<a href="https://t.me/Adhityan_edavattom">Admin™ I</a>
-<a href="https://t.me/heisenbergalready">Admin™ II</a>
-<a href="https://t.me/Akhilkrishnan121">Admin™ III</a>
-<a href="https://t.me/Roopak_raj">Admin™ IV</a>
-<a href="https://t.me/SreejithSKumar">Admin™ V</a>
-<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>
-<b>Powered by:</b>
-<u><b><i><a href="https://t.me/+eb__Eg3RS2IyZWQ1">𝐓𝐞𝐚𝐦 𝐔𝐫𝐯𝐚𝐬𝐡𝐢 𝐓𝐡𝐞𝐚𝐭𝐞𝐫𝐬™️</a></i></b></u>"""
+"""<blockquote><b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎬 ʟᴇᴏ ᴀᴅᴠᴀɴᴄᴇᴅ ғɪʟᴛᴇʀ
+
+🍿 ʏᴏᴜʀ ғᴀᴠᴏʀɪᴛᴇ ᴍᴏᴠɪᴇs &amp; sᴇʀɪᴇs ᴀʀᴇ ᴊᴜsᴛ ᴀ sᴇᴀʀᴄʜ ᴀᴡᴀʏ!
+
+🔍 sᴇᴀʀᴄʜ • ғɪɴᴅ • ᴇɴᴊᴏʏ 🍿
+
+✨ ʏᴏᴜʀ ᴍᴏᴠɪᴇs. ʏᴏᴜʀ ᴄʜᴏɪᴄᴇ.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b></blockquote>"""
+<b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ:</b>
+<u><b><i><a href="https://t.me/+eb__Eg3RS2IyZWQ1">© ᴛᴇᴀᴍ ചിത്രലോകം™</a></i></b></u>"""
 
     COMMANDS_TXT = """🛠️ <b><u>BOT COMMANDS LIST</u></b>
 
