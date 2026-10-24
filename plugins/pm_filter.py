@@ -1002,6 +1002,19 @@ async def advantage_spell_chok(client, msg):
         except Exception:
             pass
         return 
+
+    try:
+        await msg.reply_text(
+            script.SPELL_TEXT.format(msg.from_user.mention),
+            reply_markup=google_button,
+            reply_to_message_id=msg.id,
+            parse_mode=enums.ParseMode.HTML,
+            disable_web_page_preview=True
+        )
+    except Exception as e:
+        logger.error(f"Spell check message error: {e}")
+
+    return
         
 async def global_filters(client, message, text=False):
     group_id = message.chat.id
