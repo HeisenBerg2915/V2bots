@@ -138,34 +138,41 @@ async def start(client, message):
         btn = [
             [
                 InlineKeyboardButton(
-                    "👥 Join Our Group",
+                    "👥 ᴊᴏɪɴ ᴏᴜʀ ɢʀᴏᴜᴘ 👥",
                     url="https://t.me/+Ik14BdOewjQzYjI1"
                 ),
                 InlineKeyboardButton(
-                    "📢 Join To Channel",
+                    "📌 ᴊᴏɪɴ ᴛᴏ ᴄʜᴀɴɴᴇʟ 📌",
                     url="https://t.me/Clmainchannel"
                 )
             ],
             [
                 InlineKeyboardButton(
-                    "🖥️ Server",
+                    "🖥️ sᴇʀᴠᴇʀ 🖥️",
                     callback_data="koyeb_stats"
                 ),
                 InlineKeyboardButton(
-                    "📊 Stats",
+                    "📊 sᴛᴀᴛs 📊",
                     callback_data="stats"
                 )
             ]
         ]
-            
-        caption = script.START_TXT.format(message.from_user.mention if message.from_user else "User")
+
+        caption = script.START_TXT.format(
+            message.from_user.mention if message.from_user else "User"
+        )
+
         try:
-            await message.reply_text(caption, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=True)
-            except Exception:
-                pass
+            await message.reply_text(
+                caption,
+                reply_markup=InlineKeyboardMarkup(btn),
+                disable_web_page_preview=True
+            )
+        except Exception as e:
+            logger.error(f"Welcome message error: {e}")
+
         return
-
-
+      
     # കമാൻഡിനൊപ്പം ഫയൽ ഐഡിയോ റീഡയറക്ഷൻ കീയോ വന്നിട്ടുണ്ടെങ്കിൽ (Deep Linking)
     data = message.command[1]
     try:
