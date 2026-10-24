@@ -480,7 +480,10 @@ async def start(client, message):
             async def delete_file():
                 await asyncio.sleep(300)
                 try:
-                    await sent_msg.delete()
+                    await client.delete_messages(
+                        chat_id=message.from_user.id,
+                        message_ids=sent_msg.id
+                    )
                 except Exception as e:
                     logger.warning(f"Auto delete failed: {e}")
             asyncio.create_task(delete_file())
