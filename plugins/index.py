@@ -134,6 +134,7 @@ async def index_files_to_db(lst_msg_id, chat, msg, bot):
     deleted = 0
     no_media = 0
     unsupported = 0
+    episode_skipped = 0
     
     async with lock:
         try:
@@ -170,6 +171,14 @@ async def index_files_to_db(lst_msg_id, chat, msg, bot):
                     
                 media.file_type = message.media.value
                 media.caption = message.caption
+
+                # Skip TV Series Episodes like S01E01, S02E05, etc.
+                file_name = getattr(media, "file_name", "") or ""
+
+                if re.search(r'(?i)\bS\d{1,2}E\d{1,3}\b', file_name):
+                    episode_skipped += 1
+                    logger.info(f"Skipping episode file: {file_name}")
+                    continue
                 
                 # ഒറ്റ, ഇരട്ട അക്ക വ്യത്യാസമില്ലാതെ നേരിട്ട് save_file-ലേക്ക് മാറ്റുന്നു
                 tru = await check_file(media)
@@ -188,4 +197,12 @@ async def index_files_to_db(lst_msg_id, chat, msg, bot):
             logger.exception(e)
             await msg.edit(f'Error: {e}')
         else:
-            await msg.edit(f'Succesfully saved <code>{total_files}</code> to dataBase!\nDuplicate Files Skipped: <code>{duplicate}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nNon-Media messages skipped: <code>{no_media + unsupported}</code>(Unsupported Media - `{unsupported}` )\nErrors Occurred: <code>{errors}</code>')
+            await msg.edit(
+        f'Succesfully saved <code>{total_files}</code> to dataBase!\n'
+        f'Duplicate Files Skipped: <code>{duplicate}</code>\n'
+        f'Episode Files Skipped: <code>{episode_skipped}</code>\n'
+        f'Deleted Messages Skipped: <code>{deleted}</code>\n'
+        f'Non-Media messages skipped: <code>{no_media + unsupported}</code> '
+        f'(Unsupported Media - `{unsupported}`)\n'
+        f'Errors Occurred: <code>{errors}</code>'
+    )
