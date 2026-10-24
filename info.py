@@ -18,8 +18,8 @@ def is_enabled(value, default):
 import os
 
 # നിലവിലുള്ള മറ്റ് വേരിയബിളുകൾക്ക് താഴെ ഇത് ചേർക്കുക:
-TMDB_API_KEY = os.environ.get("TMDB_API_KEY", "5f28978232d6d780d64dd0d0e0bbe2f2")
-OMDB_API_KEY = os.environ.get("OMDB_API_KEY", "65f7219f")
+TMDB_API_KEY = os.environ.get("TMDB_API_KEY", ")
+OMDB_API_KEY = os.environ.get("OMDB_API_KEY", "")
 SPELL_IMG = os.environ.get("SPELL_IMG", "https://files.catbox.moe/yt159d.jpg")
 FANART_API_KEY = os.environ.get("FANART_API_KEY", "d56b45eb243c31ca1229bd37813e66d8")
 DEFAULT_POSTER = os.environ.get("DEFAULT_POSTER", "https://files.catbox.moe/oryxah.jpg")
@@ -39,10 +39,10 @@ IMG = [
 
 
 # TMDB API Keys (കോമ ഇട്ട് എത്ര കീകൾ വേണമെങ്കിലും നൽകാം)
-TMDB_API_KEYS = os.environ.get("TMDB_API_KEYS", "7a11f792bc13f275b6831932eb85bfa4,5f28978232d6d780d64dd0d0e0bbe2f2,a992c5a043c61edf1ce9d3e74d7a0aca")
+TMDB_API_KEYS = os.environ.get("TMDB_API_KEYS", "")
 
 # OMDb API Keys (ഇതുപോലെ കോമ ഇട്ട് നൽകുക)
-OMDB_API_KEYS = os.environ.get("OMDB_API_KEYS", "4b4d1a5f,5d94dd20,4c6f039d")
+OMDB_API_KEYS = os.environ.get("OMDB_API_KEYS", "")
 
 
 # Bot information
