@@ -993,7 +993,19 @@ async def advantage_spell_chok(client, msg):
     if not movies:
         try:
             await msg.reply_text(
-                script.SPELL_TEXT.format(msg.from_user.mention),
+                """<blockquote>
+<b>🚫 ᴏᴛᴛ ɴ/ᴀ ➪ ᴄʜᴇᴄᴋ sᴘᴇʟʟ 🚫</b>
+
+<b>➳ ᴍᴏᴠɪᴇ ᴏᴛᴛ ഇറങ്ങിയിട്ടില്ല കേട്ടോ
+➳അഥവാ ഇറങ്ങിയിട്ടുണ്ടെങ്കിൽ താഴെ തന്നിരിക്കുന്ന ശെരിയായ sᴘᴇʟʟɪɴɢ ഉപയോഗിച്ച് sᴇᴀʀᴄʜ തുടരുക
+➳ കിട്ടാത്ത പക്ഷം ɢᴏᴏɢʟᴇ ബട്ടൺ ഉപയോഗിക്കുക</b>
+
+<b>ᴛʜᴇ ᴍᴏᴠɪᴇ ʜᴀs ɴᴏᴛ ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ ᴏɴ ᴀɴʏ ᴏᴛᴛ ᴘʟᴀᴛғᴏʀᴍ ʏᴇᴛ.</b>
+
+<b>➳ ɪғ ɪᴛ ʜᴀs ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ, ᴘʟᴇᴀsᴇ ᴛʀʏ sᴇᴀʀᴄʜɪɴɢ ᴀɢᴀɪɴ ᴜsɪɴɢ ᴛʜᴇ ᴄᴏʀʀᴇᴄᴛ sᴘᴇʟʟɪɴɢ ᴘʀᴏᴠɪᴅᴇᴅ ʙᴇʟᴏᴡ.</b>
+
+<b>➳ ɪғ ʏᴏᴜ sᴛɪʟʟ ᴄᴀɴɴᴏᴛ ғɪɴᴅ ɪᴛ, ᴘʟᴇᴀsᴇ ᴜsᴇ ᴛʜᴇ ɢᴏᴏɢʟᴇ ʙᴜᴛᴛᴏɴ.</b>
+</blockquote>""",
                 reply_markup=google_button,
                 reply_to_message_id=msg.id,
                 parse_mode=enums.ParseMode.HTML,
@@ -1005,7 +1017,19 @@ async def advantage_spell_chok(client, msg):
 
     try:
         await msg.reply_text(
-            script.SPELL_TEXT.format(msg.from_user.mention),
+            """<blockquote>
+<b>🚫 ᴏᴛᴛ ɴ/ᴀ ➪ ᴄʜᴇᴄᴋ sᴘᴇʟʟ 🚫</b>
+
+<b>➳ ᴍᴏᴠɪᴇ ᴏᴛᴛ ഇറങ്ങിയിട്ടില്ല കേട്ടോ
+➳അഥവാ ഇറങ്ങിയിട്ടുണ്ടെങ്കിൽ താഴെ തന്നിരിക്കുന്ന ശെരിയായ sᴘᴇʟʟɪɴɢ ഉപയോഗിച്ച് sᴇᴀʀᴄʜ തുടരുക
+➳ കിട്ടാത്ത പക്ഷം ɢᴏᴏɢʟᴇ ബട്ടൺ ഉപയോഗിക്കുക</b>
+
+<b>ᴛʜᴇ ᴍᴏᴠɪᴇ ʜᴀs ɴᴏᴛ ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ ᴏɴ ᴀɴʏ ᴏᴛᴛ ᴘʟᴀᴛғᴏʀᴍ ʏᴇᴛ.</b>
+
+<b>➳ ɪғ ɪᴛ ʜᴀs ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ, ᴘʟᴇᴀsᴇ ᴛʀʏ sᴇᴀʀᴄʜɪɴɢ ᴀɢᴀɪɴ ᴜsɪɴɢ ᴛʜᴇ ᴄᴏʀʀᴇᴄᴛ sᴘᴇʟʟɪɴɢ ᴘʀᴏᴠɪᴅᴇᴅ ʙᴇʟᴏᴡ.</b>
+
+<b>➳ ɪғ ʏᴏᴜ sᴛɪʟʟ ᴄᴀɴɴᴏᴛ ғɪɴᴅ ɪᴛ, ᴘʟᴇᴀsᴇ ᴜsᴇ ᴛʜᴇ ɢᴏᴏɢʟᴇ ʙᴜᴛᴛᴏɴ.</b>
+</blockquote>""",
             reply_markup=google_button,
             reply_to_message_id=msg.id,
             parse_mode=enums.ParseMode.HTML,
