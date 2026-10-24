@@ -160,10 +160,7 @@ async def start(client, message):
             
         caption = script.START_TXT.format(message.from_user.mention if message.from_user else "User")
         try:
-            await message.reply_photo(photo="https://files.catbox.moe/egu0ip.jpg", caption=caption, reply_markup=InlineKeyboardMarkup(btn))
-        except Exception:
-            try:
-                await message.reply_text(caption, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=True)
+            await message.reply_text(caption, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=True)
             except Exception:
                 pass
         return
