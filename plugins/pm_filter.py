@@ -906,13 +906,14 @@ async def auto_filter(client, msg, spoll=False):
     files_count = total_results if total_results is not None else len(files)
     clean_title = re.sub(r'\b(19\d{2}|20[0-2]\d)\b', '', search).strip().upper()
 
-    cap = (
-        f"➤ꜰɪʟᴍ : {clean_title}{movie_year}\n"
-        f"➤ʟᴀɴɢᴜᴀɢᴇ : {detected_lang}\n"
-        f"➤ᴘʀɪɴᴛ ᴛʏᴘᴇ : {detected_print}\n"
-        f"➤ᴛᴏᴛᴀʟ ꜰɪʟᴇꜱ : {files_count}\n\n"
-        f"© ᴛᴇᴀᴍ ᴜʀᴠᴀꜱʜɪ ᴛʜᴇᴀᴛᴇʀꜱ™"
-    )
+cap = (
+    f"<blockquote><b>🍿 {clean_title}{movie_year}</b>\n\n"
+    f"🌐 <b>ʟᴀɴɢᴜᴀɢᴇ:</b> {detected_lang}\n"
+    f"🎞️ <b>ǫᴜᴀʟɪᴛʏ:</b> {detected_print}\n"
+    f"📁 <b>ғɪʟᴇs:</b> {files_count}\n\n"
+    f"🔍 <b>ʟᴇᴏ ᴀᴅᴠᴀɴᴄᴇᴅ ғɪʟᴛᴇʀ</b>\n"
+    f"✨ <i>sᴇᴀʀᴄʜ • ғɪɴᴅ • ᴇɴᴊᴏʏ</i></blockquote>"
+)
 
     settings = await get_settings(message.chat.id)
     btn, pre = [], 'filep' if settings.get('file_secure', False) else 'file'
