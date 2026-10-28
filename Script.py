@@ -9,7 +9,7 @@ class script(object):
 ✨ ʏᴏᴜʀ ᴍᴏᴠɪᴇs. ʏᴏᴜʀ ᴄʜᴏɪᴄᴇ.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b></blockquote>
-<b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ:⟬ ᴛᴇᴀᴍ ғʟɪᴍ ᴍᴀxx ⟭</b>"""
+<b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ: ⟬ ᴛᴇᴀᴍ ғʟɪᴍ ᴍᴀxx ⟭</b>"""
 
     COMMANDS_TXT = """🛠️ <b><u>BOT COMMANDS LIST</u></b>
 
