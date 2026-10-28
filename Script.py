@@ -2,8 +2,6 @@ class script(object):
     START_TXT = """<blockquote><b>ʜᴀɪ {},</b></blockquote>
 <blockquote><b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-🎬 ʟᴇᴏ ᴀᴅᴠᴀɴᴄᴇᴅ ғɪʟᴛᴇʀ
-
 🍿 ʏᴏᴜʀ ғᴀᴠᴏʀɪᴛᴇ ᴍᴏᴠɪᴇs &amp; sᴇʀɪᴇs ᴀʀᴇ ᴊᴜsᴛ ᴀ sᴇᴀʀᴄʜ ᴀᴡᴀʏ!
 
 🔍 sᴇᴀʀᴄʜ • ғɪɴᴅ • ᴇɴᴊᴏʏ 🍿
@@ -11,7 +9,7 @@ class script(object):
 ✨ ʏᴏᴜʀ ᴍᴏᴠɪᴇs. ʏᴏᴜʀ ᴄʜᴏɪᴄᴇ.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b></blockquote>
-<b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ:© ᴛᴇᴀᴍ ചിത്രലോകം™</b>"""
+<b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ:⟬ ᴛᴇᴀᴍ ғʟɪᴍ ᴍᴀxx ⟭</b>"""
 
     COMMANDS_TXT = """🛠️ <b><u>BOT COMMANDS LIST</u></b>
 
@@ -41,7 +39,7 @@ class script(object):
 ⚠ താഴെ കാണുന്ന ബട്ടണിൽ ക്ലിക്ക് ചെയിത് ചാനലിൽ ജോയിൻ ചെയ്യുക..!!👇👇</b>
     
 <b>ᴘᴏᴡᴇʀᴇᴅ ʙʏ:</b>
-👉 <i><a href="https://t.me/+Ik14BdOewjQzYjI1">© ᴛᴇᴀᴍ ചിത്രലോകം</a></i>"""
+👉 <i><a href="https://t.me/Flim_maxx">⟬ ᴛᴇᴀᴍ ғʟɪᴍ ᴍᴀxx ⟭</a></i>"""
 
     CUSTOM_FILE_CAPTION = """<code>{file_name}</code>"""
     
