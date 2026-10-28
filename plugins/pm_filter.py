@@ -1042,14 +1042,14 @@ async def advantage_spell_chok(client, msg):
     # Modern message heading
     text = (
         "<blockquote>"
-        "<b>🚫 OTT N/A • CHECK SPELL 🚫</b>\n\n"
+        "<b>🚫 ᴏᴛᴛ ɴ/ᴀ ➪ ᴄʜᴇᴄᴋ sᴘᴇʟʟ 🚫</b>\n\n"
         "━━━━━━━━━━━━━━━━━━\n"
-        "⚠️ <b>ᴍᴏᴠɪᴇ ɴᴏᴛ ғᴏᴜɴᴅ!</b>\n\n"
-        "➳ സിനിമയുടെ Spelling പരിശോധിക്കുക.\n"
-        "➳ സിനിമ OTT-യിൽ റിലീസ് ചെയ്തിട്ടില്ലായിരിക്കാം.\n\n"
-        "<b>🌐 ENGLISH</b>\n"
-        "The movie may not be available yet, "
-        "or the spelling may be incorrect.\n"
+        "<b>➳ ᴍᴏᴠɪᴇ ᴏᴛᴛ ഇറങ്ങിയിട്ടില്ല കേട്ടോ
+➳അഥവാ ഇറങ്ങിയിട്ടുണ്ടെങ്കിൽ താഴെ തന്നിരിക്കുന്ന ശെരിയായ sᴘᴇʟʟɪɴɢ ഉപയോഗിച്ച് sᴇᴀʀᴄʜ തുടരുക
+➳ കിട്ടാത്ത പക്ഷം ɢᴏᴏɢʟᴇ ബട്ടൺ ഉപയോഗിക്കുക</b>"
+        "<b>ᴛʜᴇ ᴍᴏᴠɪᴇ ʜᴀs ɴᴏᴛ ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ ᴏɴ ᴀɴʏ ᴏᴛᴛ ᴘʟᴀᴛғᴏʀᴍ ʏᴇᴛ.</b>"
+        "<b>➳ ɪғ ɪᴛ ʜᴀs ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ, ᴘʟᴇᴀsᴇ ᴛʀʏ sᴇᴀʀᴄʜɪɴɢ ᴀɢᴀɪɴ ᴜsɪɴɢ ᴛʜᴇ ᴄᴏʀʀᴇᴄᴛ sᴘᴇʟʟɪɴɢ ᴘʀᴏᴠɪᴅᴇᴅ ʙᴇʟᴏᴡ.</b>"
+        "<b>➳ ɪғ ʏᴏᴜ sᴛɪʟʟ ᴄᴀɴɴᴏᴛ ғɪɴᴅ ɪᴛ, ᴘʟᴇᴀsᴇ ᴜsᴇ ᴛʜᴇ ɢᴏᴏɢʟᴇ ʙᴜᴛᴛᴏɴ.</b>"
     )
 
     # Suggestions only when the movie API returns titles
@@ -1073,14 +1073,6 @@ async def advantage_spell_chok(client, msg):
             "💡 <b>SUGGESTIONS</b>\n"
             "<i>No suggestions available right now.</i>\n"
         )
-
-    text += (
-        "\n━━━━━━━━━━━━━━━━━━\n"
-        "🔍 ശരിയായ Spelling ഉപയോഗിച്ച് വീണ്ടും Search ചെയ്യുക.\n"
-        "🌐 കൂടുതൽ വിവരങ്ങൾക്ക് Google Button ഉപയോഗിക്കുക.\n\n"
-        "✨ <i>LEO ADVANCED FILTER</i>"
-        "</blockquote>"
-    )
 
     try:
         await msg.reply_text(
