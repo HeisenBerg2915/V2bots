@@ -1043,19 +1043,21 @@ async def advantage_spell_chok(client, msg):
     text = (
         "<blockquote>"
         "<b>🚫 ᴏᴛᴛ ɴ/ᴀ ➪ ᴄʜᴇᴄᴋ sᴘᴇʟʟ 🚫</b>\n\n"
-        "━━━━━━━━━━━━━━━━━━\n"
+        "───────────────\n"
         "<b>➳ ᴍᴏᴠɪᴇ ᴏᴛᴛ ഇറങ്ങിയിട്ടില്ല കേട്ടോ അഥവാ ഇറങ്ങിയിട്ടുണ്ടെങ്കിൽ താഴെ തന്നിരിക്കുന്ന ശെരിയായ sᴘᴇʟʟɪɴɢ ഉപയോഗിച്ച് sᴇᴀʀᴄʜ തുടരുക കിട്ടാത്ത പക്ഷം ɢᴏᴏɢʟᴇ ബട്ടൺ ഉപയോഗിക്കുക</b>"
-        "<b>ᴛʜᴇ ᴍᴏᴠɪᴇ ʜᴀs ɴᴏᴛ ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ ᴏɴ ᴀɴʏ ᴏᴛᴛ ᴘʟᴀᴛғᴏʀᴍ ʏᴇᴛ.</b>"
+        "───────────────\n"
+        "<b>➳ ᴛʜᴇ ᴍᴏᴠɪᴇ ʜᴀs ɴᴏᴛ ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ ᴏɴ ᴀɴʏ ᴏᴛᴛ ᴘʟᴀᴛғᴏʀᴍ ʏᴇᴛ.</b>"
+        
         "<b>➳ ɪғ ɪᴛ ʜᴀs ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ, ᴘʟᴇᴀsᴇ ᴛʀʏ sᴇᴀʀᴄʜɪɴɢ ᴀɢᴀɪɴ ᴜsɪɴɢ ᴛʜᴇ ᴄᴏʀʀᴇᴄᴛ sᴘᴇʟʟɪɴɢ ᴘʀᴏᴠɪᴅᴇᴅ ʙᴇʟᴏᴡ.</b>"
+        
         "<b>➳ ɪғ ʏᴏᴜ sᴛɪʟʟ ᴄᴀɴɴᴏᴛ ғɪɴᴅ ɪᴛ, ᴘʟᴇᴀsᴇ ᴜsᴇ ᴛʜᴇ ɢᴏᴏɢʟᴇ ʙᴜᴛᴛᴏɴ.</b>"
     )
 
     # Suggestions only when the movie API returns titles
     if movielist:
         text += (
-            "\n━━━━━━━━━━━━━━━━━━\n"
-            "🔎 <b>➪ CHECK SPELL</b>\n"
-            "💡 <b>SUGGESTIONS 👇</b>\n\n"
+            "\n───────────────\n"
+            "💡 <b>sᴜɢɢᴇsᴛɪᴏɴs</b>\n\n"
         )
 
         for index, movie_name in enumerate(movielist, start=1):
@@ -1068,7 +1070,7 @@ async def advantage_spell_chok(client, msg):
     else:
         text += (
             "\n━━━━━━━━━━━━━━━━━━\n"
-            "💡 <b>SUGGESTIONS</b>\n"
+            "💡 <b>sᴜɢɢᴇsᴛɪᴏɴs</b>\n"
             "<i>No suggestions available right now.</i>\n"
         )
 
