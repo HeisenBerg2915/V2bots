@@ -907,12 +907,11 @@ async def auto_filter(client, msg, spoll=False):
     clean_title = re.sub(r'\b(19\d{2}|20[0-2]\d)\b', '', search).strip().upper()
 
     cap = (
-        f"<blockquote><b>🍿 {clean_title}{movie_year}</b>\n\n"
-        f"🌐 <b>ʟᴀɴɢᴜᴀɢᴇ:</b> {detected_lang}\n"
-        f"🎞️ <b>ǫᴜᴀʟɪᴛʏ:</b> {detected_print}\n"
-        f"📁 <b>ғɪʟᴇs:</b> {files_count}\n\n"
-        f"🔍 <b>ʟᴇᴏ ᴀᴅᴠᴀɴᴄᴇᴅ ғɪʟᴛᴇʀ</b>\n"
-        f"✨ <i>sᴇᴀʀᴄʜ • ғɪɴᴅ • ᴇɴᴊᴏʏ</i></blockquote>"
+        f"<blockquote><b> {clean_title}{movie_year}</b>\n\n"
+        f"<b>ʟᴀɴɢᴜᴀɢᴇ:</b> {detected_lang}\n"
+        f"<b>ǫᴜᴀʟɪᴛʏ:</b> {detected_print}\n"
+        f"<b>ғɪʟᴇs:</b> {files_count}\n\n"
+        f"<i>sᴇᴀʀᴄʜ • ғɪɴᴅ • ᴇɴᴊᴏʏ</i></blockquote>"
     )
 
     settings = await get_settings(message.chat.id)
