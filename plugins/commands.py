@@ -140,21 +140,21 @@ async def start(client, message):
         btn = [
             [
                 InlineKeyboardButton(
-                    "👥 ᴊᴏɪɴ ᴏᴜʀ ɢʀᴏᴜᴘ 👥",
+                    "ᴊᴏɪɴ ᴏᴜʀ ɢʀᴏᴜᴘ",
                     url="https://t.me/+Ik14BdOewjQzYjI1"
                 ),
                 InlineKeyboardButton(
-                    "📌 ᴊᴏɪɴ ᴛᴏ ᴄʜᴀɴɴᴇʟ 📌",
+                    "ᴊᴏɪɴ ᴛᴏ ᴄʜᴀɴɴᴇʟ",
                     url="https://t.me/Clmainchannel"
                 )
             ],
             [
                 InlineKeyboardButton(
-                    "🖥️ sᴇʀᴠᴇʀ 🖥️",
+                    "sᴇʀᴠᴇʀ",
                     callback_data="koyeb_stats"
                 ),
                 InlineKeyboardButton(
-                    "📊 sᴛᴀᴛs 📊",
+                    "sᴛᴀᴛs",
                     callback_data="stats"
                 )
             ]
