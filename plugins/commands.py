@@ -114,26 +114,28 @@ async def send_file(client, query, ident, file_id):
 async def start(client, message):
     chat_type = message.chat.type
     user_id = message.from_user.id if message.from_user else None
-    # Fixed: Extracted the first_name parameter cleanly to provide a fallback value for user_name
     user_name = message.from_user.first_name if message.from_user else "User"
 
+    # Save user in database
     if user_id:
         try:
-            # Use the non-blocking async method we verified inside database/users_chats_db.py
             if not await db.is_user_exist(user_id):
-                await db.add_user(user_id, user_name)                    
+                await db.add_user(user_id, user_name)
         except Exception as e:
             logger.error(f"Error saving user to DB: {e}", exc_info=True)
 
+    # Save group in database
     if chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         try:
-            # Fixed: Changed user_db over to the imported db instance to align with your top imports layout
             if not await db.get_chat(int(message.chat.id)):
-                await db.add_chat(chat=int(message.chat.id), title=str(message.chat.title))
+                await db.add_chat(
+                    chat=int(message.chat.id),
+                    title=str(message.chat.title)
+                )
         except Exception as e:
             logger.error(f"Error saving group to DB: {e}", exc_info=True)
 
-
+    # Welcome message
     if len(message.command) != 2:
         btn = [
             [
@@ -163,13 +165,14 @@ async def start(client, message):
         )
 
         try:
-            await message.reply_text(
-                caption,
+            await message.reply_photo(
+                photo="https://h.uguu.se/hycKDJEy.jpg",
+                caption=caption,
                 reply_markup=InlineKeyboardMarkup(btn),
-                disable_web_page_preview=True
+                parse_mode=enums.ParseMode.HTML
             )
         except Exception as e:
-            logger.error(f"Welcome message error: {e}")
+            logger.error(f"Welcome message error: {e}", exc_info=True)
 
         return
       
