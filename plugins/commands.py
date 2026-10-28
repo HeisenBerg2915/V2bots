@@ -273,7 +273,7 @@ async def start(client, message):
     if data in ["subscribe", "error", "okay", "help"]:
         # 👥 എല്ലാ യൂസർമാർക്കും കാണാവുന്ന ഗ്രൂപ്പ് ബട്ടൺ
         btn = [
-            [InlineKeyboardButton("👥 Jᴏɪɴ Oᴜʀ Gʀᴏᴜᴘ 👥", url="https://t.me/+eb__Eg3RS2IyZWQ1")]
+            [InlineKeyboardButton("👥 ᴊᴏɪɴ ᴏᴜʀ ɢʀᴏᴜᴘ 👥", url="https://t.me/+Ik14BdOewjQzYjI1")]
         ]
         
         # 🔐 അഡ്മിൻമാർക്ക് മാത്രം കാണിക്കുന്ന പ്രത്യേക ബട്ടണുകൾ
