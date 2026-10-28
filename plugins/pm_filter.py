@@ -989,7 +989,7 @@ async def advantage_spell_chok(client, msg):
     google_button = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(
-                "🔎 CHECK SPELL • GOOGLE",
+                "🔎 ᴄʜᴇᴄᴋ sᴘᴇʟʟ (ɢᴏᴏɢʟᴇ) 🔎",
                 url=f"https://www.google.com/search?q={reqst_gle}"
             )
         ]
