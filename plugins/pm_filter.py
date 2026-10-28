@@ -112,16 +112,16 @@ async def pm_text(bot: Client, message):
                 await db.col.update_one({'id': user_id}, {'$set': {'warning_sent': True}})
                 await bot.send_chat_action(chat_id=message.chat.id, action=enums.ChatAction.TYPING)
                 await message.reply_text(
-                    text=f"<b>⚠️ ശ്രദ്ധിക്കുക / WARNING!\n\nനിങ്ങൾ ബോട്ടിന്റെ നിയമങ്ങൾ (Rules) ലംഘിച്ചതിനാൽ അഡ്മിൻ നിങ്ങളെ മ്യൂട്ട് ചെയ്തിരിക്കുകയാണ്.\n\നിയമങ്ങൾ വ്യക്തമായി വായിക്കാൻ താഴെയുള്ള rules ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.Mute ഒഴിവാക്കാൻ അഡ്മിനെ സമീപിക്കുക @Chithralokham",
-                    reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🚸 READ RULES 🚸", url="https://t.me/Chithralokham/7")]])
+                    text=f"<b>ഇവിടെ വന്ന് സെർച്ച് ചെയ്താൽ മൂവീസ് കിട്ടില്ല ഗ്രൂപ്പിൽ വന്ന് സെർച്ച് ചെയ്യൂ </b>",
+                    reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("ᴄʟɪᴄᴋ ʜᴇʀᴇ", url="https://t.me/+Ik14BdOewjQzYjI1")]])
                 )
             return
             
         await bot.send_chat_action(chat_id=message.chat.id, action=enums.ChatAction.TYPING)
         await asyncio.sleep(0.5)
         await message.reply_text(
-            text=f"<b>❌ Wrong Format / തെറ്റായ ഫോർമാറ്റ്!\n\nPlease send your request in this format:\n<code>Movie Name + Year</code>\n\nExample:\n<code>Kuruthi 2021</code>\n\n💡 സിനിമയുടെ പേരിനൊപ്പം വർഷം കൂടി ടൈപ്പ് ചെയ്ത് അയക്കുക.</b>",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🚸 MUST READ 🚸", url="https://t.me/Chithralokham/7")]])
+            text=f"<b>ഇവിടെ വന്ന് സെർച്ച് ചെയ്താൽ മൂവീസ് കിട്ടില്ല ഗ്രൂപ്പിൽ വന്ന് സെർച്ച് ചെയ്യൂ </b>",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("ᴄʟɪᴄᴋ ʜᴇʀᴇ", url="https://t.me/+Ik14BdOewjQzYjI1")]])
         )
         return
 
