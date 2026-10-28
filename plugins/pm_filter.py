@@ -951,94 +951,147 @@ async def auto_filter(client, msg, spoll=False):
 
 
 async def advantage_spell_chok(client, msg):
-    mv_id, mv_rqst = msg.id, msg.text
-    reqstr1 = msg.from_user.id if msg.from_user else 0
-    cleaned_query = re.sub(
-        r"\b(pl(i|e)\*?(s|z+|ease|se|ese|(e+)s(e)?)|((send|snd|giv(e)?|gib)(\sme)?)|movie(s)?|new|latest|"
-        r"br((o|u)h?)\*|^h(e|a)?(l)\*(o)\*|mal(ayalam)?|t(h)?amil|file|that|find|und(o)\*|"
-        r"kit(t(i|y)?)?o(w)?|thar(u)?(o)\*w?|kittum(o)\*|aya(k)\*(um(o)\*)?|full\smovie|any(one)|with\ssubtitle(s)?)",
-        "", msg.text, flags=re.IGNORECASE
-    ).strip()
+    mv_rqst = msg.text or ""
 
-    # 🟢 1. ബാക്ക്ഗ്രൗണ്ടിൽ മാനുവൽ ഫിൽട്ടർ ഉണ്ടോ എന്ന് ചെക്ക് ചെയ്യുന്നു
-    try:
-        manual_res = await manual_filters(client, msg)
-    except Exception as e:
-        logger.error(f"Manual filter error in spell check: {e}")
-        manual_res = False
-
-    # 🟢 2. മാനുവൽ ഫിൽട്ടറിൽ സിനിമ ഉണ്ടെങ്കിൽ (True ആണെങ്കിൽ) ഫങ്ഷൻ ഇവിടെ വെച്ച് നിർത്തുന്നു
-    # ഗ്രൂപ്പിലേക്ക് സ്പെൽ ചെക്ക് മെസ്സേജ് അയക്കില്ല, സിനിമ ഡാറ്റാബേസിൽ സേവ് ചെയ്യുകയുമില്ല.
-    if manual_res == True:
-        logger.info(f"Manual filter-ൽ സിനിമ ഉള്ളതിനാൽ സ്പെൽ ചെക്ക് ഒഴിവാക്കി.")
+    if not mv_rqst.strip():
         return
 
-    # 🟢 3. മാനുവൽ ഫിൽട്ടറിലും സിനിമ ഇല്ലെങ്കിൽ മാത്രം missing movie ലിസ്റ്റിലേക്ക് സേവ് ചെയ്യും
+    cleaned_query = re.sub(
+        r"\b(pl(i|e)\*?(s|z+|ease|se|ese|(e+)s(e)?)|"
+        r"((send|snd|giv(e)?|gib)(\sme)?)|movie(s)?|new|latest|"
+        r"br((o|u)h?)\*|mal(ayalam)?|t(h)?amil|file|that|find|"
+        r"full\smovie|any(one)|with\ssubtitle(s)?)",
+        "",
+        mv_rqst,
+        flags=re.IGNORECASE
+    ).strip()
+
+    if not cleaned_query:
+        cleaned_query = mv_rqst.strip()
+
+    # Manual filter check
+    try:
+        manual_res = await manual_filters(client, msg)
+        if manual_res:
+            return
+    except Exception as e:
+        logger.error(f"Manual filter error: {e}")
+
+    # Save missing movie request
     try:
         await save_missing_movie(cleaned_query)
     except Exception as e:
         logger.error(f"Missing movie save error: {e}")
 
-    # 📝 4. സിനിമ ഒന്നിലും ഇല്ലാത്തതുകൊണ്ട് താഴോട്ടുള്ള നിങ്ങളുടെ പഴയ സ്പെൽ ചെക്ക് കോഡുകൾ റൺ ആകുന്നു
+    # Google search button
     reqst_gle = quote_plus(mv_rqst)
+
     google_button = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🔎 ᴄᴏʀʀᴇᴄᴛ sᴘᴇʟʟɪɴɢ (ɢᴏᴏɢʟᴇ) 🔎", url=f"https://www.google.com/search?q={reqst_gle}")],
+        [
+            InlineKeyboardButton(
+                "🔎 CHECK SPELL • GOOGLE",
+                url=f"https://www.google.com/search?q={reqst_gle}"
+            )
+        ]
     ])
 
+    # Get suggestions from the existing movie API.
+    # No MongoDB search is performed for suggestions.
     try:
         movies = await get_poster(cleaned_query, bulk=True)
-    except Exception:
+    except Exception as e:
+        logger.error(f"Movie API error: {e}")
         movies = None
 
-    if not movies:
-        try:
-            await msg.reply_text(
-                """<blockquote>
-<b>🚫 ᴏᴛᴛ ɴ/ᴀ ➪ ᴄʜᴇᴄᴋ sᴘᴇʟʟ 🚫</b>
+    movielist = []
+    seen = set()
 
-<b>➳ ᴍᴏᴠɪᴇ ᴏᴛᴛ ഇറങ്ങിയിട്ടില്ല കേട്ടോ
-➳അഥവാ ഇറങ്ങിയിട്ടുണ്ടെങ്കിൽ താഴെ തന്നിരിക്കുന്ന ശെരിയായ sᴘᴇʟʟɪɴɢ ഉപയോഗിച്ച് sᴇᴀʀᴄʜ തുടരുക
-➳ കിട്ടാത്ത പക്ഷം ɢᴏᴏɢʟᴇ ബട്ടൺ ഉപയോഗിക്കുക</b>
+    if movies:
+        for movie in movies:
+            if isinstance(movie, dict):
+                title = movie.get("title") or movie.get("name")
+                year = movie.get("year")
+            else:
+                title = getattr(movie, "title", None)
+                year = getattr(movie, "year", None)
 
-<b>ᴛʜᴇ ᴍᴏᴠɪᴇ ʜᴀs ɴᴏᴛ ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ ᴏɴ ᴀɴʏ ᴏᴛᴛ ᴘʟᴀᴛғᴏʀᴍ ʏᴇᴛ.</b>
+            if not title:
+                continue
 
-<b>➳ ɪғ ɪᴛ ʜᴀs ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ, ᴘʟᴇᴀsᴇ ᴛʀʏ sᴇᴀʀᴄʜɪɴɢ ᴀɢᴀɪɴ ᴜsɪɴɢ ᴛʜᴇ ᴄᴏʀʀᴇᴄᴛ sᴘᴇʟʟɪɴɢ ᴘʀᴏᴠɪᴅᴇᴅ ʙᴇʟᴏᴡ.</b>
+            title = str(title).strip()
 
-<b>➳ ɪғ ʏᴏᴜ sᴛɪʟʟ ᴄᴀɴɴᴏᴛ ғɪɴᴅ ɪᴛ, ᴘʟᴇᴀsᴇ ᴜsᴇ ᴛʜᴇ ɢᴏᴏɢʟᴇ ʙᴜᴛᴛᴏɴ.</b>
-</blockquote>""",
-                reply_markup=google_button,
-                reply_to_message_id=msg.id,
-                parse_mode=enums.ParseMode.HTML,
-                disable_web_page_preview=True
+            if year and str(year) != "N/A":
+                year_match = re.search(
+                    r"\b(19\d{2}|20\d{2})\b",
+                    str(year)
+                )
+                year_text = f" {year_match.group(1)}" if year_match else ""
+            else:
+                year_text = ""
+
+            movie_name = f"{title}{year_text}"
+            key = movie_name.casefold()
+
+            if key not in seen:
+                seen.add(key)
+                movielist.append(movie_name)
+
+            if len(movielist) >= 6:
+                break
+
+    # Modern message heading
+    text = (
+        "<blockquote>"
+        "<b>🚫 OTT N/A • CHECK SPELL 🚫</b>\n\n"
+        "━━━━━━━━━━━━━━━━━━\n"
+        "⚠️ <b>ᴍᴏᴠɪᴇ ɴᴏᴛ ғᴏᴜɴᴅ!</b>\n\n"
+        "➳ സിനിമയുടെ Spelling പരിശോധിക്കുക.\n"
+        "➳ സിനിമ OTT-യിൽ റിലീസ് ചെയ്തിട്ടില്ലായിരിക്കാം.\n\n"
+        "<b>🌐 ENGLISH</b>\n"
+        "The movie may not be available yet, "
+        "or the spelling may be incorrect.\n"
+    )
+
+    # Suggestions only when the movie API returns titles
+    if movielist:
+        text += (
+            "\n━━━━━━━━━━━━━━━━━━\n"
+            "🔎 <b>➪ CHECK SPELL</b>\n"
+            "💡 <b>SUGGESTIONS 👇</b>\n\n"
+        )
+
+        for index, movie_name in enumerate(movielist, start=1):
+            safe_name = (
+                movie_name.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
             )
-        except Exception:
-            pass
-        return 
+            text += f"<b>{index}.</b> <code>{safe_name}</code>\n"
+    else:
+        text += (
+            "\n━━━━━━━━━━━━━━━━━━\n"
+            "💡 <b>SUGGESTIONS</b>\n"
+            "<i>No suggestions available right now.</i>\n"
+        )
+
+    text += (
+        "\n━━━━━━━━━━━━━━━━━━\n"
+        "🔍 ശരിയായ Spelling ഉപയോഗിച്ച് വീണ്ടും Search ചെയ്യുക.\n"
+        "🌐 കൂടുതൽ വിവരങ്ങൾക്ക് Google Button ഉപയോഗിക്കുക.\n\n"
+        "✨ <i>LEO ADVANCED FILTER</i>"
+        "</blockquote>"
+    )
 
     try:
         await msg.reply_text(
-            """<blockquote>
-<b>🚫 ᴏᴛᴛ ɴ/ᴀ ➪ ᴄʜᴇᴄᴋ sᴘᴇʟʟ 🚫</b>
-
-<b>➳ ᴍᴏᴠɪᴇ ᴏᴛᴛ ഇറങ്ങിയിട്ടില്ല കേട്ടോ
-➳അഥവാ ഇറങ്ങിയിട്ടുണ്ടെങ്കിൽ താഴെ തന്നിരിക്കുന്ന ശെരിയായ sᴘᴇʟʟɪɴɢ ഉപയോഗിച്ച് sᴇᴀʀᴄʜ തുടരുക
-➳ കിട്ടാത്ത പക്ഷം ɢᴏᴏɢʟᴇ ബട്ടൺ ഉപയോഗിക്കുക</b>
-
-<b>ᴛʜᴇ ᴍᴏᴠɪᴇ ʜᴀs ɴᴏᴛ ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ ᴏɴ ᴀɴʏ ᴏᴛᴛ ᴘʟᴀᴛғᴏʀᴍ ʏᴇᴛ.</b>
-
-<b>➳ ɪғ ɪᴛ ʜᴀs ʙᴇᴇɴ ʀᴇʟᴇᴀsᴇᴅ, ᴘʟᴇᴀsᴇ ᴛʀʏ sᴇᴀʀᴄʜɪɴɢ ᴀɢᴀɪɴ ᴜsɪɴɢ ᴛʜᴇ ᴄᴏʀʀᴇᴄᴛ sᴘᴇʟʟɪɴɢ ᴘʀᴏᴠɪᴅᴇᴅ ʙᴇʟᴏᴡ.</b>
-
-<b>➳ ɪғ ʏᴏᴜ sᴛɪʟʟ ᴄᴀɴɴᴏᴛ ғɪɴᴅ ɪᴛ, ᴘʟᴇᴀsᴇ ᴜsᴇ ᴛʜᴇ ɢᴏᴏɢʟᴇ ʙᴜᴛᴛᴏɴ.</b>
-</blockquote>""",
+            text=text,
             reply_markup=google_button,
             reply_to_message_id=msg.id,
             parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True
         )
     except Exception as e:
-        logger.error(f"Spell check message error: {e}")
-
-    return
+        logger.error(f"Spell check message error: {e}", exc_info=True)
         
 async def global_filters(client, message, text=False):
     group_id = message.chat.id
